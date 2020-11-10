@@ -10,6 +10,8 @@
 #include <Adafruit_I2CDevice.h>
 #include <Adafruit_NeoPixel.h>
 #include <vector>
+
+
 using std::vector;
 #define PIN 4
 const char* ssid = "Bleibmalocka-LAN";
@@ -18,6 +20,9 @@ const char* password = "21744762451772810918";
 
 const char* NTP_SERVER = "de.pool.ntp.org";
 const char* TZ_INFO    = "CET-1CEST-3,M3.5.0/02:00:00,M10.5.0/03:00:00";  // enter your time zone (https://remotemonitoringsystems.ca/time-zone-abbreviations.php)
+
+vector<int> Minutos;
+int h =0;
 
 tm timeinfo;
 time_t now;
@@ -142,7 +147,7 @@ void showTime(tm localTime) {
   else Serial.println(localTime.tm_wday);
 }
 
-vector<int> get_minute()
+vector<int> get_minute(int minute)
     {
       if(minute%10 == minute%15 == minute%5)
       {
@@ -150,25 +155,30 @@ vector<int> get_minute()
       }
         if((minute%10) == minute%15 && minute %5 != minute%10) //5 nach, 5 vor halb, 5 nach halb, 5 vor
         {
+            Serial.print("fünf ");
             return O_ar::min_5;
         }else if((minute%10)== (minute%5) && (minute%15)>=5)  //10 nach, 10 vor halb, 10 nach halb, 10 vor
         {
+            Serial.print("zehn ");
             return O_ar::min_10;
         }else if((minute%15) < (minute%10))  //10 nach, 10 vor halb, 10 nach halb, 10 vor
         {
+            Serial.print("viertel ");
             return O_ar::min_15;
         }
      return O_ar::intr;  
     };
-vector<int> get_vor_nach()
+vector<int> get_vor_nach(int minute)
     {
         /* vor is 0 nach is 1 in vector*/
         if((minute>=20 && minute <=30) || (minute>=50 && minute <=60))
         {
+            Serial.print("vor ");
             return O_ar::vor_nach.at(0);
         }
         else
         {
+            Serial.print("nach ");
             return O_ar::vor_nach.at(1);
         }
         
@@ -186,84 +196,60 @@ vector<int> get_hour()     //Nacharbeit nötig. Übergange bei 12, 13 und 24 zu 
         }
         else return O_ar::hours.at(t_hour-1);
     };
-vector<int> get_halb()
+vector<int> get_halb(int minute)
 {
   if (minute >= 20 && minute < 45)
   {
+    Serial.print("halb ");
   return O_ar::halb;
   }
   return vector<int> (0);
 }
  void GenerateOutputs(int hour, int minute,uint8_t r,uint8_t g,uint8_t b)
     {
-      Serial.println("Generate Outputs \n");
+      //Serial.println("Generate Outputs \n");
         strip.clear();
-        Serial.println("Generate Outputs vor minute \n");
-        for(int i: get_minute())
-        {
-        strip.setPixelColor(i,strip.Color(255, 0, 0));
-        }
-        
-        for(int i: get_halb())
-        {
-        strip.setPixelColor(i,strip.Color(r, g, b));
-        }
-        
-        Serial.println("Generate Outputs vor hour\n");
-        
-        for(int i: get_hour())
-        {
-        strip.setPixelColor(i,strip.Color(r, g, b));
-        }
-        Serial.println("Generate Outputs vor nach\n");
-        for(int i: get_vor_nach())
-        {
-        strip.setPixelColor(i,strip.Color(r, g, b));
-        }
-        Serial.println("Generate Outputs vor intno \n");
-        for (int i: O_ar::intr)
-        {
-        strip.setPixelColor(i,strip.Color(r, g, b));
-        }
-        Serial.println("Generate Outputs vor o_arr \n");
-        for (int i:O_ar::o_Uhr)
-        {
-        strip.setPixelColor(i,strip.Color(r, g, b));
-        }
-        
-        strip.show();
-        Serial.println("show erfolgreich \n");
-    };
-    /*
-    void gen_output()
-    {
-        strip.clear();
-        hour=10;
-        minute = 10;
-        for(int i: get_minute())
-        {
-        strip.setPixelColor(i,strip.Color(255, 0, 0));
-        }
-        for(int i: get_hour())
-        {
-        strip.setPixelColor(i,strip.Color(255, 0, 0));
-        }
-        for(int i: get_vor_nach())
-        {
-        strip.setPixelColor(i,strip.Color(255, 0, 0));
-        }
-        for (int i: O_ar::intr)
-        {
-        strip.setPixelColor(i,strip.Color(255, 0, 0));
-        }
-        for (int i:O_ar::o_Uhr)
-        {
-        strip.setPixelColor(i,strip.Color(255, 0, 0));
-        }
-        strip.show();
-    };
+        //Serial.println("Generate Outputs vor minute \n");
+        Serial.print("Es ist ");
 
-*/
+        for(int i: get_minute(minute))
+        {
+        strip.setPixelColor(i,strip.Color(255, 0, 0));
+        }
+
+        for(int i: get_vor_nach(minute))
+        {
+        strip.setPixelColor(i,strip.Color(r, g, b));
+        }
+        
+        for(int i: get_halb(minute))
+        {
+        strip.setPixelColor(i,strip.Color(r, g, b));
+        }
+        
+        //Serial.println("Generate Outputs vor hour\n");
+        /*
+        for(int i: get_hour())
+        {
+        strip.setPixelColor(i,strip.Color(r, g, b));
+        }
+        */
+        //Serial.println("Generate Outputs vor nach\n");
+        
+        //Serial.println("Generate Outputs vor intro \n");
+        for (int i: O_ar::intr)
+        {
+        strip.setPixelColor(i,strip.Color(r, g, b));
+        }
+        //Serial.println("Generate Outputs vor o_arr \n");
+        for (int i:O_ar::o_Uhr)
+        {
+        strip.setPixelColor(i,strip.Color(r, g, b));
+        }
+        
+        strip.show();
+        //Serial.println("\n show erfolgreich \n");
+    };
 
     
 
@@ -300,31 +286,30 @@ void setup() {
     strip.clear();
     strip.setBrightness(50);
     strip.show(); // Initialize all pixels to 'off'
-    Serial.println("Setup ist fertig");
+        for (int i = 0; i< 61; i++)
+    {
+      Minutos.push_back(i);
+
+    }
 }
 
+
 void loop() {
-  
+  if(h> 60)
+  {
+  h=0;
+  }
   //getNTPtime(10);
   //showTime(timeinfo);
-  Serial.println("Stunden");
-  while (Serial.available() == 0) { 
-  }
-  hour = Serial.read();
-  Serial.println("Minuten");
-  while (Serial.available() == 0) { 
-  }
-  minute = Serial.read();
-
+  
+/*
   hour = timeinfo.tm_hour;
   minute = timeinfo.tm_min;
-  Serial.println("hour = " );
-  Serial.println(hour);
-  Serial.println("\n");
-    Serial.println("Minute = " );
-  Serial.println(minute);
-  GenerateOutputs(hour, minute,128,128,0);
-
+  */
+  Serial.println();
+  Serial.println(h);
+  GenerateOutputs(10,Minutos.at(h),128,128,0);
+   h++;
   delay(1000);
 }
 
