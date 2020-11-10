@@ -127,7 +127,7 @@ bool getNTPtime(int sec) {
 
 void showTime(tm localTime) {
   Serial.print(localTime.tm_mday);
-  Serial.print('/');
+  Serial.print('/ schwanz');
   Serial.print(localTime.tm_mon + 1);
   Serial.print('/');
   Serial.print(localTime.tm_year - 100);
