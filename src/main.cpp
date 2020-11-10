@@ -12,6 +12,7 @@
 #include <vector>
 using std::vector;
 #define PIN 4
+schwimml
 
 const char* ssid = "Bleibmalocka-LAN";
 const char* password = "21744762451772810918";
@@ -127,7 +128,7 @@ bool getNTPtime(int sec) {
 
 void showTime(tm localTime) {
   Serial.print(localTime.tm_mday);
-  Serial.print('/ schwanz');
+  Serial.print('/');
   Serial.print(localTime.tm_mon + 1);
   Serial.print('/');
   Serial.print(localTime.tm_year - 100);
