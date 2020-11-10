@@ -272,7 +272,7 @@ void setup()
 {
   Serial.begin(115200);
   Serial.println("\n\nNTP Time Test\n");
-  /*WiFi.begin(ssid, password);
+  WiFi.begin(ssid, password);
 
   int counter = 0;
   while (WiFi.status() != WL_CONNECTED) {
@@ -294,10 +294,7 @@ void setup()
   showTime(timeinfo);
   lastNTPtime = time(&now);
   lastEntryTime = millis();
-        #if defined (__AVR_ATtiny85__)
-        if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
-        #endif
-        */
+
   strip.begin();
   strip.clear();
   strip.setBrightness(50);
@@ -315,16 +312,16 @@ void loop()
   {
     h = 0;
   }
-  //getNTPtime(10);
-  //showTime(timeinfo);
+  getNTPtime(10);
+  showTime(timeinfo);
 
-  /*
+  
   hour = timeinfo.tm_hour;
   minute = timeinfo.tm_min;
-  */
+  
   Serial.println();
   Serial.println(h);
-  GenerateOutputs(10, Minutos.at(h), 128, 128, 0);
+  GenerateOutputs(hour,minute , 128, 128, 0);
   h++;
   delay(1000);
 }
