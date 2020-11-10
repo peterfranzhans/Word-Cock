@@ -11,18 +11,16 @@
 #include <Adafruit_NeoPixel.h>
 #include <vector>
 
-
 using std::vector;
 #define PIN 4
-const char* ssid = "Bleibmalocka-LAN";
-const char* password = "21744762451772810918";
+const char *ssid = "Bleibmalocka-LAN";
+const char *password = "21744762451772810918";
 
-
-const char* NTP_SERVER = "de.pool.ntp.org";
-const char* TZ_INFO    = "CET-1CEST-3,M3.5.0/02:00:00,M10.5.0/03:00:00";  // enter your time zone (https://remotemonitoringsystems.ca/time-zone-abbreviations.php)
+const char *NTP_SERVER = "de.pool.ntp.org";
+const char *TZ_INFO = "CET-1CEST-3,M3.5.0/02:00:00,M10.5.0/03:00:00"; // enter your time zone (https://remotemonitoringsystems.ca/time-zone-abbreviations.php)
 
 vector<int> Minutos;
-int h =0;
+int h = 0;
 
 tm timeinfo;
 time_t now;
@@ -35,56 +33,54 @@ int hour;
 namespace O_ar
 {
   /**                 H      A      L       B **/
-  vector<int> halb= {65,   64,  63,  62};
+  vector<int> halb = {65, 64, 63, 62};
 
-    /**            E    S       I        S       T **/
-    vector<int> intr= {109,   108,    106,    105,    104};
-    /**            F    Ü       N        F       **/
-    vector<int> min_5={102, 101, 100, 99};
-    /**             Z     E      H         N **/
-    vector<int> min_10={88,   89,  90,  91};
-    /**            V   I   E   R   T   E   L**/
-    vector<int> min_15={83, 82, 81, 80, 79, 78, 77};
-    
-    vector<vector<int>> mins= {min_5,min_10,min_15};
+  /**            E    S       I        S       T **/
+  vector<int> intr = {109, 108, 106, 105, 104};
+  /**            F    Ü       N        F       **/
+  vector<int> min_5 = {102, 101, 100, 99};
+  /**             Z     E      H         N **/
+  vector<int> min_10 = {88, 89, 90, 91};
+  /**            V   I   E   R   T   E   L**/
+  vector<int> min_15 = {83, 82, 81, 80, 79, 78, 77};
 
-    /**            N    A     C   H**/
-    vector<int> nach={68,  69,  70,  71};
-    /**         V   O   R**/
-    vector<int> vor={72, 73, 74};
-    vector<vector<int>> vor_nach= {vor,nach};
-                  /**E   I   N   S**/
-    vector<int> hours_1={46,  47,  48,  49}; 
-                  /**Z    W   E   I**/
-    vector<int> hours_2={44,   45,  46,  47};
+  vector<vector<int>> mins = {min_5, min_10, min_15};
 
-                  /**D   R   E   I**/
-    vector<int> hours_3={42, 41,   40, 39};
-                  /**V  I     E   R**/
-    vector<int> hours_4={29,  30,  31,  32};
-                  /**F  Ü   N   F**/
-    vector<int> hours_5={36,35,34, 33};
-                  /**S  E  C   H  S **/
-    vector<int> hours_6={1, 2,  3,  4, 5};
-                  /**S  I E  B  E N**/
-    vector<int> hours_7={49,50,51,52,53,54};
-                      /**A  C H  T**/
-    vector<int> hours_8={20,  19,  18,  17};
-                      /**N  E U N**/
-    vector<int> hours_9={25,  26,  27,  28};
-                      /**Z  E H N**/
-    vector<int> hours_10={16, 15 , 14,  13};
-                      /** E L  F**/
-    vector<int> hours_11={22,   23,  24};
-                      /**Z  W Ö L F**/
-    vector<int> hours_12={ 60,  59,  58,  57,  56};
-                /**U  H R**/  
-   vector<vector<int>> hours={hours_1,hours_2,hours_3,hours_4,hours_5,hours_6,hours_7,hours_8,hours_9,hours_10,hours_11,hours_12};
-   vector<int> o_Uhr= {8,9,10};
-    
+  /**            N    A     C   H**/
+  vector<int> nach = {68, 69, 70, 71};
+  /**         V   O   R**/
+  vector<int> vor = {72, 73, 74};
+  vector<vector<int>> vor_nach = {vor, nach};
+  /**E   I   N   S**/
+  vector<int> hours_1 = {46, 47, 48, 49};
+  /**Z    W   E   I**/
+  vector<int> hours_2 = {44, 45, 46, 47};
 
+  /**D   R   E   I**/
+  vector<int> hours_3 = {42, 41, 40, 39};
+  /**V  I     E   R**/
+  vector<int> hours_4 = {29, 30, 31, 32};
+  /**F  Ü   N   F**/
+  vector<int> hours_5 = {36, 35, 34, 33};
+  /**S  E  C   H  S **/
+  vector<int> hours_6 = {1, 2, 3, 4, 5};
+  /**S  I E  B  E N**/
+  vector<int> hours_7 = {49, 50, 51, 52, 53, 54};
+  /**A  C H  T**/
+  vector<int> hours_8 = {20, 19, 18, 17};
+  /**N  E U N**/
+  vector<int> hours_9 = {25, 26, 27, 28};
+  /**Z  E H N**/
+  vector<int> hours_10 = {16, 15, 14, 13};
+  /** E L  F**/
+  vector<int> hours_11 = {22, 23, 24};
+  /**Z  W Ö L F**/
+  vector<int> hours_12 = {60, 59, 58, 57, 56};
+  /**U  H R**/
+  vector<vector<int>> hours = {hours_1, hours_2, hours_3, hours_4, hours_5, hours_6, hours_7, hours_8, hours_9, hours_10, hours_11, hours_12};
+  vector<int> o_Uhr = {8, 9, 10};
 
-/**
+  /**
  *109   108 107 106 105 104 103 102 101 100 99
  * E    S   K   I   S   T   L   F   Ü   N   F  
  * 88   89  90  91  92  93  94  95  96  97  98
@@ -107,20 +103,24 @@ namespace O_ar
  * B    S   E   C   H   S   F   M   U   H   R
  **/
 
-}
+} // namespace O_ar
 
-bool getNTPtime(int sec) {
+bool getNTPtime(int sec)
+{
 
   {
     uint32_t start = millis();
-    do {
+    do
+    {
       time(&now);
       localtime_r(&now, &timeinfo);
       Serial.print(".");
       delay(10);
     } while (((millis() - start) <= (1000 * sec)) && (timeinfo.tm_year < (2016 - 1900)));
-    if (timeinfo.tm_year <= (2016 - 1900)) return false;  // the NTP call was not successful
-    Serial.print("now ");  Serial.println(now);
+    if (timeinfo.tm_year <= (2016 - 1900))
+      return false; // the NTP call was not successful
+    Serial.print("now ");
+    Serial.println(now);
     char time_output[30];
     strftime(time_output, 30, "%a  %d-%m-%y %T", localtime(&now));
     Serial.println(time_output);
@@ -129,7 +129,8 @@ bool getNTPtime(int sec) {
   return true;
 }
 
-void showTime(tm localTime) {
+void showTime(tm localTime)
+{
   Serial.print(localTime.tm_mday);
   Serial.print('/ spipiz');
   Serial.print('/');
@@ -143,121 +144,135 @@ void showTime(tm localTime) {
   Serial.print(':');
   Serial.print(localTime.tm_sec);
   Serial.print(" Day of Week ");
-  if (localTime.tm_wday == 0)   Serial.println(7);
-  else Serial.println(localTime.tm_wday);
+  if (localTime.tm_wday == 0)
+    Serial.println(7);
+  else
+    Serial.println(localTime.tm_wday);
 }
 
 vector<int> get_minute(int minute)
-    {
-      if(minute%10 == minute%15 == minute%5)
-      {
-      return vector<int>(0);
-      }
-        if((minute%10) == minute%15 && minute %5 != minute%10) //5 nach, 5 vor halb, 5 nach halb, 5 vor
-        {
-            Serial.print("fünf ");
-            return O_ar::min_5;
-        }else if((minute%10)== (minute%5) && (minute%15)>=5)  //10 nach, 10 vor halb, 10 nach halb, 10 vor
-        {
-            Serial.print("zehn ");
-            return O_ar::min_10;
-        }else if((minute%15) < (minute%10))  //10 nach, 10 vor halb, 10 nach halb, 10 vor
-        {
-            Serial.print("viertel ");
-            return O_ar::min_15;
-        }
-     return O_ar::intr;  
-    };
+{
+  if ((minute >= 5 && minute < 10) || (minute >= 25 && minute < 30) || (minute >= 35 && minute < 40) || (minute >= 55 && minute < 60)) //fünf
+  {
+    Serial.print("fünf ");
+    return O_ar::min_5;
+  }
+  else if ((minute >= 10 && minute < 15) || (minute >= 20 && minute < 25) || (minute >= 40 && minute < 45) || (minute >= 50 && minute < 55)) //10 nach, 10 vor halb, 10 nach halb, 10 vor
+  {
+    Serial.print("zehn ");
+    return O_ar::min_10;
+  }
+  else if ((minute >= 15 && minute < 20) || (minute >= 45 && minute < 50)) //viertel
+  {
+    Serial.print("viertel ");
+    return O_ar::min_15;
+  }
+
+  return vector<int>(0,0);
+};
+
 vector<int> get_vor_nach(int minute)
-    {
-        /* vor is 0 nach is 1 in vector*/
-        if((minute>=20 && minute <=30) || (minute>=50 && minute <=60))
-        {
-            Serial.print("vor ");
-            return O_ar::vor_nach.at(0);
-        }
-        else
-        {
-            Serial.print("nach ");
-            return O_ar::vor_nach.at(1);
-        }
-        
-    };
-vector<int> get_hour()     //Nacharbeit nötig. Übergange bei 12, 13 und 24 zu 1 checken sowie array position
-    {
-      int t_hour= hour;
-      if(hour>= 12)
-      {
-        t_hour = hour-12;
-      }
-      if(minute>=45)
-        {
-        return O_ar::hours.at(t_hour); //11:45 viertel vor 12  hour +1
-        }
-        else return O_ar::hours.at(t_hour-1);
-    };
+{
+  /* vor is 0 nach is 1 in vector*/
+  if ((minute >= 20 && minute < 30) || (minute >= 45 && minute < 60))
+  {
+    Serial.print("vor ");
+    return O_ar::vor_nach.at(0);
+  }
+  else if ((minute >= 5 && minute < 20) || (minute >= 35 && minute < 45))
+  {
+    Serial.print("nach ");
+    return O_ar::vor_nach.at(1);
+  }
+  else
+  {
+    return vector<int>(0, 0);
+  }
+};
+
+vector<int> get_hour(int hour, int minute)
+{
+  int t_hour = hour;
+  if (hour > 12)
+  {
+    t_hour = hour - 12;
+  }
+  
+  if (minute >= 20)
+  {
+    Serial.print(t_hour+1);
+    return O_ar::hours.at(t_hour); //11:20 10 vor halb 12  hour +1
+  }
+  else
+    Serial.print(t_hour);
+    return O_ar::hours.at(t_hour - 1);
+};
+
 vector<int> get_halb(int minute)
 {
   if (minute >= 20 && minute < 45)
   {
     Serial.print("halb ");
-  return O_ar::halb;
+    return O_ar::halb;
   }
-  return vector<int> (0);
+  return vector<int>(0);
 }
- void GenerateOutputs(int hour, int minute,uint8_t r,uint8_t g,uint8_t b)
-    {
-      //Serial.println("Generate Outputs \n");
-        strip.clear();
-        //Serial.println("Generate Outputs vor minute \n");
-        Serial.print("Es ist ");
 
-        for(int i: get_minute(minute))
-        {
-        strip.setPixelColor(i,strip.Color(255, 0, 0));
-        }
-
-        for(int i: get_vor_nach(minute))
-        {
-        strip.setPixelColor(i,strip.Color(r, g, b));
-        }
-        
-        for(int i: get_halb(minute))
-        {
-        strip.setPixelColor(i,strip.Color(r, g, b));
-        }
-        
-        //Serial.println("Generate Outputs vor hour\n");
-        /*
-        for(int i: get_hour())
-        {
-        strip.setPixelColor(i,strip.Color(r, g, b));
-        }
-        */
-        //Serial.println("Generate Outputs vor nach\n");
-        
-        //Serial.println("Generate Outputs vor intro \n");
-        for (int i: O_ar::intr)
-        {
-        strip.setPixelColor(i,strip.Color(r, g, b));
-        }
-        //Serial.println("Generate Outputs vor o_arr \n");
-        for (int i:O_ar::o_Uhr)
-        {
-        strip.setPixelColor(i,strip.Color(r, g, b));
-        }
-        
-        strip.show();
-        //Serial.println("\n show erfolgreich \n");
-    };
-
-    
+vector<int> get_outro(int minute) //Nacharbeit nötig. Übergange bei 12, 13 und 24 zu 1 checken sowie array position
+{
+if(minute>=0 && minute < 5)
+{
+  Serial.print("Uhr");
+  return O_ar::o_Uhr;
+}
+return vector<int>(0,0);
+};
 
 
-void setup() {
+void GenerateOutputs(int hour, int minute, uint8_t r, uint8_t g, uint8_t b)
+{
+  strip.clear();
+
+  for (int i : O_ar::intr)
+  {
+    strip.setPixelColor(i, strip.Color(r, g, b));
+  }
+  Serial.print("Es ist ");
+
+  for (int i : get_minute(minute))
+  {
+    strip.setPixelColor(i, strip.Color(r, g, b));
+  }
+
+  for (int i : get_vor_nach(minute))
+  {
+    strip.setPixelColor(i, strip.Color(r, g, b));
+  }
+
+  for (int i : get_halb(minute))
+  {
+    strip.setPixelColor(i, strip.Color(r, g, b));
+  }
+
+  for (int i : get_hour(hour, minute))
+  {
+    strip.setPixelColor(i, strip.Color(r, g, b));
+  }
+
+  for (int i : get_outro(minute))
+  {
+    strip.setPixelColor(i, strip.Color(r, g, b));
+  }
+
+  strip.show();
+  //Serial.println("\n show erfolgreich \n");
+};
+
+void setup()
+{
   Serial.begin(115200);
   Serial.println("\n\nNTP Time Test\n");
-  WiFi.begin(ssid, password);
+  /*WiFi.begin(ssid, password);
 
   int counter = 0;
   while (WiFi.status() != WL_CONNECTED) {
@@ -282,36 +297,34 @@ void setup() {
         #if defined (__AVR_ATtiny85__)
         if (F_CPU == 16000000) clock_prescale_set(clock_div_1);
         #endif
-    strip.begin();
-    strip.clear();
-    strip.setBrightness(50);
-    strip.show(); // Initialize all pixels to 'off'
-        for (int i = 0; i< 61; i++)
-    {
-      Minutos.push_back(i);
+        */
+  strip.begin();
+  strip.clear();
+  strip.setBrightness(50);
+  strip.show(); // Initialize all pixels to 'off'
 
-    }
+  for (int i = 0; i < 61; i++)
+  {
+    Minutos.push_back(i);
+  }
 }
 
-
-void loop() {
-  if(h> 60)
+void loop()
+{
+  if (h > 60)
   {
-  h=0;
+    h = 0;
   }
   //getNTPtime(10);
   //showTime(timeinfo);
-  
-/*
+
+  /*
   hour = timeinfo.tm_hour;
   minute = timeinfo.tm_min;
   */
   Serial.println();
   Serial.println(h);
-  GenerateOutputs(10,Minutos.at(h),128,128,0);
-   h++;
+  GenerateOutputs(10, Minutos.at(h), 128, 128, 0);
+  h++;
   delay(1000);
 }
-
-
-
