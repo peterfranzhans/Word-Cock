@@ -3,6 +3,7 @@
 #else
 #include <WiFi.h>
 #endif
+#include <Arduino.h>
 #include <time.h>
 #include "EEPROM.h"
 #include <SPI.h>
@@ -10,9 +11,14 @@
 #include <Adafruit_I2CDevice.h>
 #include <Adafruit_NeoPixel.h>
 #include <vector>
+#include <encode.h>
+#include <Encoder.h>
+
 
 using std::vector;
 #define PIN 4
+
+
 const char *ssid = "Bleibmalocka-LAN";
 const char *password = "21744762451772810918";
 
@@ -26,9 +32,26 @@ tm timeinfo;
 time_t now;
 long unsigned lastNTPtime;
 unsigned long lastEntryTime;
+
 Adafruit_NeoPixel strip(110, PIN, NEO_RGB + NEO_KHZ800);
 int minute;
 int hour;
+
+uint8_t Encode_PIN_DT = 17 ;
+uint8_t Clock_PIN_CLK = 16; 
+uint8_t Color_Select_SM = 5; 
+volatile uint8_t Color_Sel;
+portMUX_TYPE synch = portMUX_INITIALIZER_UNLOCKED;
+
+Encoder myEnc(Encode_PIN_DT, Clock_PIN_CLK);
+uint8_t oldPosition  = 0;
+
+void Color_Select()
+{
+  portENTER_CRITICAL(&synch);
+  Color_Sel=(Color_Sel+1)%7;
+  portENTER_CRITICAL(&synch);
+}
 
 namespace O_ar
 {
@@ -103,6 +126,17 @@ namespace O_ar
  * B    S   E   C   H   S   F   M   U   H   R
  **/
 
+
+vector<int> rot = {255,0,0};
+vector<int> gelb = {255,255,0};
+vector<int> blau = {0,0,255};
+vector<int> orange = {255,102,0};
+vector<int> dunkelgelb = {255,153,0};
+vector<int> helleresgelb = {255,204,0};
+vector<int> rosa = {255,0,255};
+vector<int> weiss = {255,255,255};
+vector<int> hellblau = {0,255,255};
+vector<vector<int>> Cola={rot, blau,gelb , orange, dunkelgelb, helleresgelb,rosa,weiss,hellblau};
 } // namespace O_ar
 
 bool getNTPtime(int sec)
@@ -132,7 +166,7 @@ bool getNTPtime(int sec)
 void showTime(tm localTime)
 {
   Serial.print(localTime.tm_mday);
-  Serial.print('/ spipiz');
+  Serial.print('/');
   Serial.print('/');
   Serial.print(localTime.tm_mon + 1);
   Serial.print('/');
@@ -300,6 +334,8 @@ void setup()
   strip.setBrightness(50);
   strip.show(); // Initialize all pixels to 'off'
 
+   attachInterrupt(Color_Select_SM, Color_Select, RISING);
+
   for (int i = 0; i < 61; i++)
   {
     Minutos.push_back(i);
@@ -308,20 +344,20 @@ void setup()
 
 void loop()
 {
-  if (h > 60)
-  {
-    h = 0;
-  }
   getNTPtime(10);
   showTime(timeinfo);
+  GenerateOutputs(timeinfo.tm_hour, timeinfo.tm_min , O_ar::Cola.at(Color_Sel).at(0), O_ar::Cola.at(Color_Sel).at(1), O_ar::Cola.at(Color_Sel).at(2));
 
-  
-  hour = timeinfo.tm_hour;
-  minute = timeinfo.tm_min;
-  
-  Serial.println();
-  Serial.println(h);
-  GenerateOutputs(hour,minute , 128, 128, 0);
-  h++;
-  delay(1000);
+  uint8_t newPosition = myEnc.read();
+
+  if (newPosition != oldPosition) 
+  {
+    oldPosition = newPosition;
+    strip.setBrightness(oldPosition);
+  }
+   delay(1000);
 }
+
+
+
+
