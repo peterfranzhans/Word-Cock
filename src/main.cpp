@@ -40,15 +40,15 @@ int hour;
 
 uint8_t Encode_PIN_DT = 17 ;
 uint8_t Clock_PIN_CLK = 16; 
-uint8_t Color_Select_SM = 18; 
+uint8_t Color_Select_SW = 26; 
 int old_Color=0;
 RTC_DATA_ATTR volatile uint8_t Color_Sel;
+static long alteZeit;
 
-
-Encoder myEnc(Encode_PIN_DT, Clock_PIN_CLK);
+Encoder myEnc(Encode_PIN_DT, Clock_PIN_CLK, &alteZeit);
 uint8_t oldPosition  = 0;
 
-long alteZeit;
+
 
 
 namespace O_ar
@@ -145,6 +145,7 @@ void Color_Select()
     Color_Sel=(Color_Sel+1)%9;
     alteZeit = millis() + 1000;
   }
+  Serial.println("Aufruf");
 }
 
 bool getNTPtime(int sec)
@@ -310,6 +311,12 @@ void GenerateOutputs(int hour, int minute, uint8_t g, uint8_t r, uint8_t b)
   //Serial.println("\n show erfolgreich \n");
 };
 
+void wakeup()
+{
+esp_sleep_wakeup_cause_t reaseon;
+
+}
+
 void setup()
 {
   Serial.begin(115200);
@@ -341,8 +348,8 @@ void setup()
   strip.clear();
   strip.setBrightness(50);
   strip.show(); // Initialize all pixels to 'off'
-  pinMode(Color_Select_SM, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(Color_Select_SM), Color_Select, RISING);
+  pinMode(Color_Select_SW, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(Color_Select_SW), Color_Select, RISING);  
 
   for (int i = 0; i < 61; i++)
   {
@@ -350,6 +357,8 @@ void setup()
   }
 
   alteZeit = millis();
+
+esp_sleep_enable_timer_wakeup(14400000000);
 }
 
 void loop()
@@ -374,7 +383,10 @@ void loop()
   }
   Serial.print("ColorSelect = ");
   Serial.println(Color_Sel);
-
+if(timeinfo.tm_hour == 2 && timeinfo.tm_min == 0)
+{
+  esp_deep_sleep_start();
+}
   delay(1000);
 }
 
