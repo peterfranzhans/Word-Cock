@@ -41,23 +41,15 @@ int hour;
 uint8_t Encode_PIN_DT = 17 ;
 uint8_t Clock_PIN_CLK = 16; 
 uint8_t Color_Select_SM = 18; 
+int old_Color=0;
 RTC_DATA_ATTR volatile uint8_t Color_Sel;
+
 
 Encoder myEnc(Encode_PIN_DT, Clock_PIN_CLK);
 uint8_t oldPosition  = 0;
 
 long alteZeit;
 
-
-void Color_Select()
-{
-  if(millis() > alteZeit){
-    Color_Sel=(Color_Sel+1)%9;
-    GenerateOutputs(timeinfo.tm_hour, timeinfo.tm_min , O_ar::Cola.at(Color_Sel).at(0), O_ar::Cola.at(Color_Sel).at(1), O_ar::Cola.at(Color_Sel).at(2));
-
-    alteZeit = millis() + 1000;
-  }
-}
 
 namespace O_ar
 {
@@ -144,6 +136,16 @@ vector<int> weiss = {255,255,255};
 vector<int> hellblau = {0,255,255};
 vector<vector<int>> Cola={rot, gelb, blau, orange, dunkelgelb, helleresgelb, rosa, weiss, hellblau};
 } // namespace O_ar
+
+
+
+void Color_Select()
+{
+  if(millis() > alteZeit){
+    Color_Sel=(Color_Sel+1)%9;
+    alteZeit = millis() + 1000;
+  }
+}
 
 bool getNTPtime(int sec)
 {
@@ -352,12 +354,14 @@ void setup()
 
 void loop()
 {
+  O_ar::min_10.rend();
   getNTPtime(10);
   showTime(timeinfo);
     
-  if(timeinfo.tm_min != oldTimeinfo.tm_min){
+  if(timeinfo.tm_min != oldTimeinfo.tm_min || Color_Sel != old_Color){
     GenerateOutputs(timeinfo.tm_hour, timeinfo.tm_min , O_ar::Cola.at(Color_Sel).at(0), O_ar::Cola.at(Color_Sel).at(1), O_ar::Cola.at(Color_Sel).at(2));
     oldTimeinfo = timeinfo;
+    old_Color = Color_Sel;
   }
 
   uint8_t newPosition = myEnc.read();
