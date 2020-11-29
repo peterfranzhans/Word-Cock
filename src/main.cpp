@@ -28,6 +28,7 @@ const char *TZ_INFO = "CET-1CEST-3,M3.5.0/02:00:00,M10.5.0/03:00:00"; // enter y
 vector<int> Minutos;
 int h = 0;
 
+tm oldTimeinfo;
 tm timeinfo;
 time_t now;
 long unsigned lastNTPtime;
@@ -39,18 +40,23 @@ int hour;
 
 uint8_t Encode_PIN_DT = 17 ;
 uint8_t Clock_PIN_CLK = 16; 
-uint8_t Color_Select_SM = 5; 
-volatile uint8_t Color_Sel;
-portMUX_TYPE synch = portMUX_INITIALIZER_UNLOCKED;
+uint8_t Color_Select_SM = 18; 
+RTC_DATA_ATTR volatile uint8_t Color_Sel;
 
 Encoder myEnc(Encode_PIN_DT, Clock_PIN_CLK);
 uint8_t oldPosition  = 0;
 
+long alteZeit;
+
+
 void Color_Select()
 {
-  portENTER_CRITICAL(&synch);
-  Color_Sel=(Color_Sel+1)%7;
-  portENTER_CRITICAL(&synch);
+  if(millis() > alteZeit){
+    Color_Sel=(Color_Sel+1)%9;
+    GenerateOutputs(timeinfo.tm_hour, timeinfo.tm_min , O_ar::Cola.at(Color_Sel).at(0), O_ar::Cola.at(Color_Sel).at(1), O_ar::Cola.at(Color_Sel).at(2));
+
+    alteZeit = millis() + 1000;
+  }
 }
 
 namespace O_ar
@@ -136,7 +142,7 @@ vector<int> helleresgelb = {255,204,0};
 vector<int> rosa = {255,0,255};
 vector<int> weiss = {255,255,255};
 vector<int> hellblau = {0,255,255};
-vector<vector<int>> Cola={rot, blau,gelb , orange, dunkelgelb, helleresgelb,rosa,weiss,hellblau};
+vector<vector<int>> Cola={rot, gelb, blau, orange, dunkelgelb, helleresgelb, rosa, weiss, hellblau};
 } // namespace O_ar
 
 bool getNTPtime(int sec)
@@ -263,7 +269,7 @@ return vector<int>(0,0);
 };
 
 
-void GenerateOutputs(int hour, int minute, uint8_t r, uint8_t g, uint8_t b)
+void GenerateOutputs(int hour, int minute, uint8_t g, uint8_t r, uint8_t b)
 {
   strip.clear();
 
@@ -333,29 +339,39 @@ void setup()
   strip.clear();
   strip.setBrightness(50);
   strip.show(); // Initialize all pixels to 'off'
-
-   attachInterrupt(Color_Select_SM, Color_Select, RISING);
+  pinMode(Color_Select_SM, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(Color_Select_SM), Color_Select, RISING);
 
   for (int i = 0; i < 61; i++)
   {
     Minutos.push_back(i);
   }
+
+  alteZeit = millis();
 }
 
 void loop()
 {
   getNTPtime(10);
   showTime(timeinfo);
-  GenerateOutputs(timeinfo.tm_hour, timeinfo.tm_min , O_ar::Cola.at(Color_Sel).at(0), O_ar::Cola.at(Color_Sel).at(1), O_ar::Cola.at(Color_Sel).at(2));
+    
+  if(timeinfo.tm_min != oldTimeinfo.tm_min){
+    GenerateOutputs(timeinfo.tm_hour, timeinfo.tm_min , O_ar::Cola.at(Color_Sel).at(0), O_ar::Cola.at(Color_Sel).at(1), O_ar::Cola.at(Color_Sel).at(2));
+    oldTimeinfo = timeinfo;
+  }
 
   uint8_t newPosition = myEnc.read();
-
+  Serial.print("Rotary Encoder NewPos = ");
+  Serial.println(newPosition);
   if (newPosition != oldPosition) 
   {
     oldPosition = newPosition;
     strip.setBrightness(oldPosition);
   }
-   delay(1000);
+  Serial.print("ColorSelect = ");
+  Serial.println(Color_Sel);
+
+  delay(1000);
 }
 
 
