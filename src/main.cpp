@@ -45,10 +45,15 @@ int old_Color=0;
 RTC_DATA_ATTR volatile uint8_t Color_Sel;
 
 
-Encoder myEnc(Encode_PIN_DT, Clock_PIN_CLK);
-uint8_t oldPosition  = 0;
+//Encoder myEnc(Encode_PIN_DT, Clock_PIN_CLK);
+//uint8_t oldPosition  = 0;
 
 long alteZeit;
+
+int counter = 0; 
+int oldCounter = 0;
+int aState;
+int aLastState;  
 
 
 namespace O_ar
@@ -350,11 +355,16 @@ void setup()
   }
 
   alteZeit = millis();
+
+  pinMode (Encode_PIN_DT,INPUT);
+  pinMode (Clock_PIN_CLK,INPUT);
+
+  aLastState = digitalRead(Encode_PIN_DT);
 }
 
 void loop()
 {
-  O_ar::min_10.rend();
+  /*O_ar::min_10.rend();
   getNTPtime(10);
   showTime(timeinfo);
     
@@ -362,9 +372,9 @@ void loop()
     GenerateOutputs(timeinfo.tm_hour, timeinfo.tm_min , O_ar::Cola.at(Color_Sel).at(0), O_ar::Cola.at(Color_Sel).at(1), O_ar::Cola.at(Color_Sel).at(2));
     oldTimeinfo = timeinfo;
     old_Color = Color_Sel;
-  }
+  }*/
 
-  uint8_t newPosition = myEnc.read();
+  /*uint8_t newPosition = myEnc.read();
   Serial.print("Rotary Encoder NewPos = ");
   Serial.println(newPosition);
   if (newPosition != oldPosition) 
@@ -373,9 +383,26 @@ void loop()
     strip.setBrightness(oldPosition);
   }
   Serial.print("ColorSelect = ");
-  Serial.println(Color_Sel);
+  Serial.println(Color_Sel);*/
 
-  delay(1000);
+  aState = digitalRead(Encode_PIN_DT); // Reads the "current" state of the outputA
+   // If the previous and the current state of the outputA are different, that means a Pulse has occured
+   if (aState != aLastState){     
+     // If the outputB state is different to the outputA state, that means the encoder is rotating clockwise
+     if (digitalRead(Clock_PIN_CLK) != aState) { 
+       counter ++;
+     } else {
+       counter --;
+     }
+     Serial.print("Position: ");
+     Serial.println(counter);
+   } 
+   aLastState = aState; // Updates the previous state of the outputA with the current state
+   if (counter != oldCounter) 
+   {
+    oldCounter = counter;
+    strip.setBrightness(counter);
+   }
 }
 
 
