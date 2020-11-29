@@ -387,7 +387,8 @@ void loop()
 
   aState = digitalRead(Encode_PIN_DT); // Reads the "current" state of the outputA
    // If the previous and the current state of the outputA are different, that means a Pulse has occured
-   if (aState != aLastState){     
+   if (aState != aLastState){   
+     alteZeit = millis() + 1000;  
      // If the outputB state is different to the outputA state, that means the encoder is rotating clockwise
      if (digitalRead(Clock_PIN_CLK) != aState) { 
        counter ++;
