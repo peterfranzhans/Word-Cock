@@ -53,7 +53,7 @@ uint8_t oldPosition  = 0;
 
 
 
-int counter = 0; 
+uint8_t counter = 0; 
 int oldCounter = 0;
 int aState;
 int aLastState;  
@@ -151,9 +151,9 @@ void Color_Select()
 {
   if(millis() > alteZeit){
     Color_Sel=(Color_Sel+1)%9;
-    alteZeit = millis() + 1000;
+    alteZeit = millis() + 100;
   }
-  Serial.println("Aufruf");
+
 }
 
 bool getNTPtime(int sec)
@@ -165,17 +165,17 @@ bool getNTPtime(int sec)
     {
       time(&now);
       localtime_r(&now, &timeinfo);
-      Serial.print(".");
+    //  Serial.print(".");
       delay(10);
     } while (((millis() - start) <= (1000 * sec)) && (timeinfo.tm_year < (2016 - 1900)));
     if (timeinfo.tm_year <= (2016 - 1900))
       return false; // the NTP call was not successful
-    Serial.print("now ");
-    Serial.println(now);
+    //Serial.print("now ");
+    //Serial.println(now);
     char time_output[30];
     strftime(time_output, 30, "%a  %d-%m-%y %T", localtime(&now));
-    Serial.println(time_output);
-    Serial.println();
+    //Serial.println(time_output);
+    //Serial.println();
   }
   return true;
 }
@@ -331,10 +331,10 @@ void setup()
   Serial.println("\n\nNTP Time Test\n");
   WiFi.begin(ssid, password);
 
-  int counter = 0;
+  int counterw = 0;
   while (WiFi.status() != WL_CONNECTED) {
     delay(200);
-    if (++counter > 100) ESP.restart();
+    if (++counterw > 100) ESP.restart();
     Serial.print ( "." );
   }
   Serial.println("\n\nWiFi connected\n\n");
@@ -348,7 +348,7 @@ void setup()
     Serial.println("Time not set");
     ESP.restart();
   }
-  showTime(timeinfo);
+  //showTime(timeinfo);
   lastNTPtime = time(&now);
   lastEntryTime = millis();
 
@@ -376,16 +376,15 @@ esp_sleep_enable_timer_wakeup(14400000000);
 
 void loop()
 {
-  /*O_ar::min_10.rend();
+ O_ar::min_10.rend();
   getNTPtime(10);
-  showTime(timeinfo);
+  //showTime(timeinfo);
     
-  if(timeinfo.tm_min != oldTimeinfo.tm_min || Color_Sel != old_Color){
+  if(timeinfo.tm_min != oldTimeinfo.tm_min || Color_Sel != old_Color ){
     GenerateOutputs(timeinfo.tm_hour, timeinfo.tm_min , O_ar::Cola.at(Color_Sel).at(0), O_ar::Cola.at(Color_Sel).at(1), O_ar::Cola.at(Color_Sel).at(2));
     oldTimeinfo = timeinfo;
     old_Color = Color_Sel;
-  }*/
-
+  }
   /*uint8_t newPosition = myEnc.read();
   Serial.print("Rotary Encoder NewPos = ");
   Serial.println(newPosition);
@@ -402,16 +401,20 @@ if(timeinfo.tm_hour == 2 && timeinfo.tm_min == 0)
 }
   delay(1000);
   Serial.println(Color_Sel);*/
-
+  int a = millis();
+  while(millis()< a+1000 && Color_Sel == old_Color)
+  {
   aState = digitalRead(Encode_PIN_DT); // Reads the "current" state of the outputA
    // If the previous and the current state of the outputA are different, that means a Pulse has occured
    if (aState != aLastState){   
-     alteZeit = millis() + 1000;  
+     alteZeit = millis() + 500;  
      // If the outputB state is different to the outputA state, that means the encoder is rotating clockwise
      if (digitalRead(Clock_PIN_CLK) != aState) { 
-       counter ++;
+      if (counter <245)
+       counter = counter +10;
      } else {
-       counter --;
+    if(counter >10)
+       counter = counter- 10;
      }
      Serial.print("Position: ");
      Serial.println(counter);
@@ -420,8 +423,11 @@ if(timeinfo.tm_hour == 2 && timeinfo.tm_min == 0)
    if (counter != oldCounter) 
    {
     oldCounter = counter;
+    
     strip.setBrightness(counter);
+   GenerateOutputs(timeinfo.tm_hour, timeinfo.tm_min , O_ar::Cola.at(Color_Sel).at(0), O_ar::Cola.at(Color_Sel).at(1), O_ar::Cola.at(Color_Sel).at(2));
    }
+  }
 }
 
 
