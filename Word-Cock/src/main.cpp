@@ -332,11 +332,12 @@ vector<int> get_vor_nach(int minute)
 vector<int> get_hour(int hour, int minute)
 {
   int t_hour = hour;
-  if (hour >= 12)
+  if (hour > 12)
   {
     t_hour = hour - 12;
   }
 
+  //"Ein" Uhr
   if (t_hour == 1 && minute < 5)
   {
     return O_ar::hours_1_;
@@ -344,12 +345,19 @@ vector<int> get_hour(int hour, int minute)
 
   if (minute >= 20)
   {
-    Serial.print(t_hour + 1);
-    return O_ar::hours.at(t_hour); //11:20 10 vor halb 12  hour +1
-  }
-  else
+    if(t_hour == 12){
+      Serial.print(1);
+      return O_ar::hours.at(0);
+      
+    } else {
+      Serial.print(t_hour + 1);
+      return O_ar::hours.at(t_hour); //11:20 10 vor halb 12  hour +1
+    }
+    
+  } else {
     Serial.print(t_hour);
-  return O_ar::hours.at(t_hour - 1);
+    return O_ar::hours.at(t_hour - 1);
+  }
 };
 
 vector<int> get_halb(int minute)
